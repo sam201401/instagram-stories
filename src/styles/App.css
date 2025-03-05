@@ -1,0 +1,12 @@
+.App {
+  max-width: 100%;
+  overflow-x: hidden;
+  background: #fff;
+  min-height: 100vh;
+}
+
+@media (min-width: 768px) {
+  .App {
+    /* display: none; Mobile-only */
+  }
+}
