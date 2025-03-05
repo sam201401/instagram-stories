@@ -69,7 +69,7 @@ const StoryList: React.FC<StoryListProps> = ({ onStorySelect }) => {
             background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
             padding: '3px',
             cursor: 'pointer',
-            overflow: 'hidden', // Ensure content stays within circle
+            overflow: 'hidden',
           }}
           onClick={() => onStorySelect(story)}
         >
@@ -77,15 +77,19 @@ const StoryList: React.FC<StoryListProps> = ({ onStorySelect }) => {
             src={story.imageUrl}
             alt={`Story ${story.id}`}
             style={{
-              width: '100%',
-              height: '100%',
+              width: '120%', // Oversize to ensure full coverage
+              height: '120%', // Oversize to ensure full coverage
               borderRadius: '50%',
-              objectFit: 'cover', // Crop to fill circle
+              objectFit: 'cover',
               border: '2px solid #fff',
-              display: 'block', // Remove any default spacing
+              display: 'block',
+              position: 'relative',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)', // Center the oversized image
             }}
             onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/70x70?text=Error'; // Fallback
+              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/70x70?text=Error';
             }}
           />
         </div>

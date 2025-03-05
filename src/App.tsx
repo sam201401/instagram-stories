@@ -13,7 +13,10 @@ const App: React.FC = () => {
     if (stories.length === 0) {
       fetch('/stories.json')
         .then((response) => response.json())
-        .then((data: Story[]) => setStories(data));
+        .then((data: Story[]) => {
+          setStories(data);
+          console.log('Selected story ID:', story.id, 'First story ID:', data[0].id); // Debug
+        });
     }
   };
 

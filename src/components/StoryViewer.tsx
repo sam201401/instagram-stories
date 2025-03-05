@@ -8,24 +8,46 @@ interface StoryViewerProps {
 }
 
 const StoryViewer: React.FC<StoryViewerProps> = ({ stories, initialStory, onClose }) => {
-  const [currentIndex, setCurrentIndex] = useState(stories.findIndex((s) => s.id === initialStory.id));
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    const index = stories.findIndex((s) => s.id === initialStory.id);
+    console.log('Initial story ID:', initialStory.id, 'Found index:', index);
+    return index === -1 ? 0 : index;
+  });
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    console.log('Starting auto-advance at index:', currentIndex);
     setProgress(0);
-    const timer = setInterval(() => {
+    const interval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
-          handleNext();
-          return 0;
-        }
-        return prev + 2; // 5s = 5000ms / 100ms = 50 steps, 2% each
+        const newProgress = prev + 2; // 5s = 5000ms / 100ms = 50 steps
+        return newProgress > 100 ? 100 : newProgress; // Cap at 100
       });
     }, 100);
 
-    return () => clearInterval(timer);
-  }, [currentIndex]);
+    const timeout = setTimeout(() => {
+      clearInterval(interval); // Stop progress
+      if (currentIndex < stories.length - 1) {
+        setIsTransitioning(true);
+        setTimeout(() => {
+          setCurrentIndex((prev) => {
+            const next = prev + 1;
+            console.log('Advancing to index:', next, 'Image:', stories[next].imageUrl);
+            return next;
+          });
+          setIsTransitioning(false);
+        }, 300);
+      } else {
+        onClose();
+      }
+    }, 5000); // Advance after exactly 5s
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [currentIndex, stories, onClose]);
 
   const handleNext = () => {
     if (currentIndex < stories.length - 1) {
@@ -75,7 +97,6 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ stories, initialStory, onClos
       }}
       onClick={handleTap}
     >
-      {/* Progress Bars */}
       <div style={{ width: '100%', padding: '10px 5px', display: 'flex', gap: '3px' }}>
         {stories.map((story, index) => (
           <div
@@ -102,21 +123,17 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ stories, initialStory, onClos
           </div>
         ))}
       </div>
-
-      {/* Story Image */}
       <img
         src={currentStory.imageUrl}
         alt={`Story ${currentStory.id}`}
         style={{
           width: '100%',
-          height: 'calc(100% - 50px)', // Leave space for progress bars
+          height: 'calc(100% - 50px)',
           objectFit: 'cover',
           transition: 'opacity 0.3s ease-in-out',
           opacity: isTransitioning ? 0 : 1,
         }}
       />
-
-      {/* Tap Zone Overlays (Optional Visual Cues) */}
       <div
         style={{
           position: 'absolute',
@@ -145,8 +162,6 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ stories, initialStory, onClos
         onMouseOver={(e) => (e.currentTarget.style.opacity = '0.3')}
         onMouseOut={(e) => (e.currentTarget.style.opacity = '0')}
       />
-
-      {/* Close Button */}
       <button
         onClick={(e) => {
           e.stopPropagation();
