@@ -10,19 +10,19 @@ interface StoryViewerProps {
 const StoryViewer: React.FC<StoryViewerProps> = ({ stories, initialStory, onClose }) => {
   const [currentIndex, setCurrentIndex] = useState(stories.findIndex((s) => s.id === initialStory.id));
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [progress, setProgress] = useState(0); // Progress from 0 to 100%
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    setProgress(0); // Reset progress on story change
+    setProgress(0);
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           handleNext();
           return 0;
         }
-        return prev + 2; // Increment every 100ms (5s = 5000ms / 100 = 50 increments, but 2% per step for smoothness)
+        return prev + 2; // 5s = 5000ms / 100ms = 50 steps, 2% each
       });
-    }, 100); // Update every 100ms
+    }, 100);
 
     return () => clearInterval(timer);
   }, [currentIndex]);
@@ -72,20 +72,19 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ stories, initialStory, onClos
         background: 'black',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
       }}
       onClick={handleTap}
     >
       {/* Progress Bars */}
-      <div style={{ width: '90%', display: 'flex', gap: '4px', position: 'absolute', top: '10px' }}>
+      <div style={{ width: '100%', padding: '10px 5px', display: 'flex', gap: '3px' }}>
         {stories.map((story, index) => (
           <div
             key={story.id}
             style={{
               flex: 1,
-              height: '4px',
+              height: '2px',
               background: index < currentIndex ? '#fff' : '#555',
+              borderRadius: '2px',
               position: 'relative',
             }}
           >
@@ -95,6 +94,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ stories, initialStory, onClos
                   height: '100%',
                   width: `${progress}%`,
                   background: '#fff',
+                  borderRadius: '2px',
                   transition: 'width 0.1s linear',
                 }}
               />
@@ -103,33 +103,67 @@ const StoryViewer: React.FC<StoryViewerProps> = ({ stories, initialStory, onClos
         ))}
       </div>
 
+      {/* Story Image */}
       <img
         src={currentStory.imageUrl}
         alt={`Story ${currentStory.id}`}
         style={{
-          maxWidth: '100%',
-          maxHeight: '90%',
-          objectFit: 'cover', // Ensure proper aspect ratio
+          width: '100%',
+          height: 'calc(100% - 50px)', // Leave space for progress bars
+          objectFit: 'cover',
           transition: 'opacity 0.3s ease-in-out',
           opacity: isTransitioning ? 0 : 1,
         }}
       />
-      <button
-        onClick={(e) => { e.stopPropagation(); onClose(); }}
+
+      {/* Tap Zone Overlays (Optional Visual Cues) */}
+      <div
         style={{
           position: 'absolute',
-          top: '10px',
-          right: '10px',
-          background: 'rgba(0, 0, 0, 0.7)',
-          color: 'white',
+          top: 0,
+          left: 0,
+          width: '33%',
+          height: '100%',
+          background: 'rgba(255, 255, 255, 0.1)',
+          opacity: 0,
+          transition: 'opacity 0.2s',
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.opacity = '0.3')}
+        onMouseOut={(e) => (e.currentTarget.style.opacity = '0')}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '33%',
+          height: '100%',
+          background: 'rgba(255, 255, 255, 0.1)',
+          opacity: 0,
+          transition: 'opacity 0.2s',
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.opacity = '0.3')}
+        onMouseOut={(e) => (e.currentTarget.style.opacity = '0')}
+      />
+
+      {/* Close Button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+        }}
+        style={{
+          position: 'absolute',
+          top: '15px',
+          right: '15px',
+          background: 'none',
           border: 'none',
-          borderRadius: '50%',
-          width: '30px',
-          height: '30px',
+          color: '#fff',
+          fontSize: '24px',
           cursor: 'pointer',
         }}
       >
-        X
+        ×
       </button>
     </div>
   );

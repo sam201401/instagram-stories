@@ -28,16 +28,17 @@ const StoryList: React.FC<StoryListProps> = ({ onStorySelect }) => {
 
   if (loading) {
     return (
-      <div style={{ overflowX: 'auto', whiteSpace: 'nowrap', padding: '10px' }}>
-        {Array(3).fill(0).map((_, i) => (
+      <div style={{ overflowX: 'auto', whiteSpace: 'nowrap', padding: '10px 0' }}>
+        {Array(10).fill(0).map((_, i) => (
           <div
             key={i}
             style={{
-              width: '60px',
-              height: '100px',
-              marginRight: '10px',
+              width: '70px',
+              height: '70px',
+              borderRadius: '50%',
               background: '#ccc',
               display: 'inline-block',
+              margin: '0 8px',
               animation: 'pulse 1.5s infinite',
             }}
           />
@@ -55,15 +56,39 @@ const StoryList: React.FC<StoryListProps> = ({ onStorySelect }) => {
   if (error) return <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>;
 
   return (
-    <div style={{ overflowX: 'auto', whiteSpace: 'nowrap', padding: '10px' }}>
+    <div style={{ overflowX: 'auto', whiteSpace: 'nowrap', padding: '10px 0', background: '#fff' }}>
       {stories.map((story) => (
-        <img
+        <div
           key={story.id}
-          src={story.imageUrl}
-          alt={`Story ${story.id}`}
-          style={{ width: '60px', height: '100px', marginRight: '10px', cursor: 'pointer', borderRadius: '8px' }}
+          style={{
+            display: 'inline-block',
+            margin: '0 8px',
+            width: '70px',
+            height: '70px',
+            borderRadius: '50%',
+            background: 'linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
+            padding: '3px',
+            cursor: 'pointer',
+            overflow: 'hidden', // Ensure content stays within circle
+          }}
           onClick={() => onStorySelect(story)}
-        />
+        >
+          <img
+            src={story.imageUrl}
+            alt={`Story ${story.id}`}
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: '50%',
+              objectFit: 'cover', // Crop to fill circle
+              border: '2px solid #fff',
+              display: 'block', // Remove any default spacing
+            }}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/70x70?text=Error'; // Fallback
+            }}
+          />
+        </div>
       ))}
     </div>
   );

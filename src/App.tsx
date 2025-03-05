@@ -19,7 +19,6 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <h1>Instagram Stories</h1>
       <StoryList onStorySelect={handleStorySelect} />
       {selectedStory && stories.length > 0 && (
         <StoryViewer
