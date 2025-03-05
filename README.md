@@ -3,7 +3,7 @@
 A simplified Instagram Stories feature built with React.js and TypeScript.
 
 ## Deployment Link
-- [Live Demo](https://your-vercel-url.vercel.app) *(Replace with your Vercel URL)*
+- [Live Demo](https://instagram-stories-three.vercel.app/) 
 
 ## Setup and Running
 1. **Clone the Repository**:
