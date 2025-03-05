@@ -16,5 +16,10 @@ A simplified Instagram Stories feature built with React.js and TypeScript.
    npm run test:e2e
    Requires Playwright installed (npx playwright install).
    
+Design Choices
+Performance: Stories are fetched once from stories.json and stored in state. Images use objectFit: 'cover' for efficient rendering.
+Scalability: Modular components (StoryList, StoryViewer) allow easy extension (e.g., adding usernames).
+UX: Instagram-like UI with circular thumbnails, progress bars, and tap navigation for an intuitive mobile experience.
+Testing: Playwright E2E tests ensure core functionality (list loading, auto-advance, taps).
 
 
